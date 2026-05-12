@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Owner Dashboard — Aldi Market</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#f7f4ee;
+      --surface:#ffffff;
+      --surface-2:#faf8f3;
+      --ink:#1b1713;
+      --muted:#7e7468;
+      --border:#e5ddd1;
+      --gold:#c9a84c;
+      --gold-2:#f4e6b8;
+      --success:#2e9f62;
+      --danger:#d65745;
+      --info:#3f7fe0;
+      --warning:#d29027;
+      --shadow:0 14px 40px rgba(26, 22, 17, 0.08);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Jost',sans-serif;
+      background:linear-gradient(180deg,#fcfaf6 0%, var(--bg) 100%);
+      color:var(--ink);
+      min-height:100vh;
+    }
+    button,input,select,textarea{font:inherit}
+    a{text-decoration:none;color:inherit}
+    .app{
+      max-width:1500px;
+      margin:0 auto;
+      padding:24px;
+      display:grid;
+      grid-template-columns:280px minmax(0, 1fr);
+      gap:24px;
+    }
+    .sidebar{
+      position:sticky;
+      top:24px;
+      align-self:start;
+      background:rgba(27,23,19,0.97);
+      color:#fff;
+      border-radius:26px;
+      padding:22px 18px;
+      box-shadow:var(--shadow);
+      min-height:calc(100vh - 48px);
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      z-index:20;
+    }
+    .logo-title{
+      font-family:'Cormorant Garamond',serif;
+      font-size:2rem;
+      line-height:1;
+    }
+    .logo-title span{color:var(--gold)}
+    .logo-sub{
+      color:rgba(255,255,255,.45);
+      text-transform:uppercase;
+      letter-spacing:.15em;
+      font-size:.68rem;
+      margin-top:6px;
+    }
+    .owner-pill{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.07);
+    }
+    .owner-avatar{
+      width:46px;height:46px;border-radius:50%;
+      background:var(--gold);color:var(--ink);
+      display:grid;place-items:center;font-weight:700;
+    }
+    .owner-name{font-weight:600}
+    .owner-role{font-size:.74rem;color:var(--gold)}
+    .menu{
+      display:grid;
+      gap:8px;
+      margin-top:10px;
+    }
+    .menu-btn{
+      border:none;
+      width:100%;
+      text-align:left;
+      background:transparent;
+      color:rgba(255,255,255,.72);
+      padding:12px 14px;
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      transition:.2s ease;
+    }
+    .menu-btn:hover,.menu-btn.active{
+      color:#fff;
+      background:rgba(201,168,76,.14);
+      border:1px solid rgba(201,168,76,.24);
+    }
+    .sidebar-footer{
+      margin-top:auto;
+      display:grid;
+      gap:10px;
+    }
+    .sidebar small{color:rgba(255,255,255,.42);line-height:1.5}
+    .btn-ghost{
+      border:1px solid rgba(255,255,255,.12);
+      background:transparent;
+      color:#fff;
+      padding:12px 14px;
+      border-radius:14px;
+      cursor:pointer;
+    }
+    .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+    .main{
+      display:grid;
+      gap:20px;
+      min-width:0;
+    }
+    .mobile-top{
+      display:none;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:4px;
+    }
+    .mobile-toggle{
+      border:none;
+      background:var(--surface);
+      box-shadow:var(--shadow);
+      padding:11px 14px;
+      border-radius:14px;
+      cursor:pointer;
+    }
+    .header-card{
+      background:linear-gradient(135deg,#201a14 0%, #2b2218 40%, #2d251b 100%);
+      border-radius:28px;
+      color:#fff;
+      padding:26px 28px;
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      align-items:end;
+    }
+    .header-kicker{
+      font-size:.75rem;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.52);
+      margin-bottom:12px;
+    }
+    .header-title{
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(2.2rem,4vw,3.4rem);
+      line-height:.95;
+    }
+    .header-title span{color:var(--gold)}
+    .header-copy{
+      color:rgba(255,255,255,.7);
+      margin-top:12px;
+      max-width:720px;
+      line-height:1.7;
+    }
+    .header-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:flex-end;
+      align-self:start;
+    }
+    .btn-primary,.btn-secondary,.btn-danger{
+      border:none;
+      border-radius:14px;
+      padding:12px 16px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .btn-primary{background:var(--gold); color:var(--ink)}
+    .btn-secondary{background:var(--surface); color:var(--ink)}
+    .btn-danger{background:rgba(214,87,69,.12); color:var(--danger); border:1px solid rgba(214,87,69,.25)}
+    .grid-stats{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:16px;
+    }
+    .stat-card, .panel-card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .stat-card{padding:18px}
+    .stat-label{
+      font-size:.78rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+    .stat-value{
+      font-size:2rem;
+      font-weight:700;
+      line-height:1;
+    }
+    .stat-note{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:.88rem;
+    }
+    .tabs{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .tab-btn{
+      border:none;
+      background:var(--surface);
+      border:1px solid var(--border);
+      padding:12px 16px;
+      border-radius:14px;
+      cursor:pointer;
+      color:var(--muted);
+      font-weight:600;
+    }
+    .tab-btn.active{
+      background:#201a14;
+      color:#fff;
+      border-color:#201a14;
+    }
+    .panel{display:none;gap:18px}
+    .panel.active{display:grid}
+    .panel-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+    }
+    .panel-card{padding:18px;overflow:hidden}
+    .panel-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:14px;
+    }
+    .panel-title{
+      font-size:1.1rem;
+      font-weight:700;
+    }
+    .panel-sub{
+      color:var(--muted);
+      font-size:.88rem;
+      margin-top:4px;
+    }
+    .badge{
+      padding:8px 12px;
+      border-radius:999px;
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      color:var(--muted);
+      font-size:.76rem;
+      white-space:nowrap;
+    }
+    .chart{
+      display:grid;
+      gap:14px;
+    }
+    .bars{
+      display:flex;
+      align-items:flex-end;
+      gap:12px;
+      min-height:220px;
+      padding-top:16px;
+    }
+    .bar-col{flex:1;display:grid;gap:8px}
+    .bar{
+      width:100%;
+      border-radius:14px 14px 6px 6px;
+      background:linear-gradient(180deg, #dfc06a 0%, var(--gold) 100%);
+      min-height:10px;
+      transition:.3s ease;
+    }
+    .bar:hover{transform:translateY(-4px)}
+    .bar-money{
+      font-size:.7rem;
+      color:var(--muted);
+      text-align:center;
+    }
+    .bar-label{
+      font-size:.75rem;
+      text-align:center;
+      color:var(--muted);
+    }
+    .mini-list{
+      display:grid;
+      gap:10px;
+    }
+    .mini-item{
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      gap:12px;
+      align-items:center;
+      padding:12px 14px;
+      border-radius:14px;
+      background:var(--surface-2);
+      border:1px solid var(--border);
+    }
+    .mini-emoji{
+      width:42px;height:42px;border-radius:14px;
+      display:grid;place-items:center;
+      background:#fff;
+      font-size:1.1rem;
+      border:1px solid var(--border);
+    }
+    .mono{font-family:'DM Mono',monospace}
+    .muted{color:var(--muted)}
+    .table-wrap{overflow:auto}
+    table{
+      width:100%;
+      min-width:720px;
+      border-collapse:collapse;
+    }
+    th,td{
+      padding:14px 12px;
+      border-bottom:1px solid var(--border);
+      text-align:left;
+      vertical-align:top;
+      font-size:.9rem;
+    }
+    th{
+      color:var(--muted);
+      font-size:.75rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    tr:hover td{background:rgba(201,168,76,.04)}
+    .status{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:.75rem;
+      font-weight:600;
+    }
+    .status.pending{background:rgba(210,144,39,.12); color:var(--warning)}
+    .status.process{background:rgba(63,127,224,.11); color:var(--info)}
+    .status.done{background:rgba(46,159,98,.11); color:var(--success)}
+    .status.cancel{background:rgba(214,87,69,.11); color:var(--danger)}
+    .status.pay_later,.status.waiting_payment{background:rgba(210,144,39,.12); color:var(--warning)}
+    .status.paid{background:rgba(46,159,98,.11); color:var(--success)}
+    .status.cancelled{background:rgba(214,87,69,.11); color:var(--danger)}
+    .row-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .small-btn{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      padding:8px 10px;
+      cursor:pointer;
+      font-size:.8rem;
+    }
+    .small-btn:hover{border-color:var(--gold); color:var(--gold)}
+    .small-btn.success:hover{border-color:var(--success); color:var(--success)}
+    .small-btn.danger:hover{border-color:var(--danger); color:var(--danger)}
+    .filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:12px;
+    }
+    .chip{
+      border:none;
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      color:var(--muted);
+      border-radius:999px;
+      padding:8px 12px;
+      cursor:pointer;
+      font-size:.82rem;
+    }
+    .chip.active{
+      background:#201a14;
+      color:#fff;
+      border-color:#201a14;
+    }
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:14px;
+    }
+    .field{display:grid;gap:8px}
+    .field.full{grid-column:1 / -1}
+    label{
+      font-size:.8rem;
+      color:var(--muted);
+      font-weight:600;
+    }
+    input,select,textarea{
+      width:100%;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:14px;
+      padding:12px 14px;
+      color:var(--ink);
+    }
+    textarea{min-height:120px;resize:vertical}
+    .stack{display:grid;gap:16px}
+    .inline-note{
+      background:var(--surface-2);
+      border:1px dashed var(--border);
+      color:var(--muted);
+      padding:14px;
+      border-radius:14px;
+      font-size:.88rem;
+      line-height:1.7;
+    }
+    .empty{
+      padding:28px;
+      text-align:center;
+      color:var(--muted);
+      background:var(--surface-2);
+      border-radius:16px;
+      border:1px dashed var(--border);
+    }
+    .toast{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      background:#201a14;
+      color:#fff;
+      padding:14px 16px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      transform:translateY(100px);
+      opacity:0;
+      transition:.25s ease;
+      z-index:60;
+    }
+    .toast.show{transform:translateY(0); opacity:1}
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(16,12,8,.4);
+      backdrop-filter:blur(2px);
+      display:none;
+      z-index:15;
+    }
+    .overlay.open{display:block}
+    .mobile-only{display:none}
+    @media (max-width: 1180px){
+      .grid-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .panel-grid,.header-card{grid-template-columns:1fr}
+      .header-actions{justify-content:flex-start}
+    }
+    @media (max-width: 920px){
+      .app{grid-template-columns:1fr;padding:16px}
+      .mobile-top{display:flex}
+      .sidebar{
+        position:fixed;
+        top:16px;
+        bottom:16px;
+        left:16px;
+        width:min(82vw,320px);
+        min-height:auto;
+        transform:translateX(-120%);
+        transition:.28s ease;
+        z-index:40;
+      }
+      .sidebar.open{transform:translateX(0)}
+      .overlay.open{display:block}
+      .main{gap:16px}
+    }
+    @media (max-width: 640px){
+      .grid-stats,.form-grid{grid-template-columns:1fr}
+      .header-card{padding:20px}
+      .header-copy{font-size:.92rem}
+      .stat-value{font-size:1.6rem}
+      .tabs{overflow:auto; padding-bottom:2px}
+      .tab-btn{white-space:nowrap}
+      .panel-card{padding:16px}
+      .mobile-only{display:inline-flex}
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div>
+        <div class="logo-title">Aldi<span>Market</span></div>
+        <div class="logo-sub">Owner analytics dashboard</div>
+      </div>
+
+      <div class="owner-pill">
+        <div class="owner-avatar" id="ownerAvatar">AM</div>
+        <div>
+          <div class="owner-name" id="ownerName">Owner</div>
+          <div class="owner-role">Super Admin</div>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <button class="menu-btn active" data-tab="overview">📈 Overview</button>
+        <button class="menu-btn" data-tab="orders">📦 Orders</button>
+        <button class="menu-btn" data-tab="products">🛍️ Products</button>
+        <button class="menu-btn" data-tab="customers">👥 Customers</button>
+        <button class="menu-btn" data-tab="payment">💳 Payment</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <small>
+          Semua data sekarang sudah terhubung ke backend API. Dashboard ini aman dipakai di desktop maupun HP.
+        </small>
+        <button class="btn-ghost" id="goStoreBtn">↗ Buka Toko</button>
+        <button class="btn-ghost" id="logoutBtn">Keluar</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="mobile-top">
+        <button class="mobile-toggle" onclick="toggleSidebar(true)">☰ Menu</button>
+        <button class="mobile-toggle" onclick="reloadAll()">⟳ Refresh</button>
+      </div>
+
+      <section class="header-card">
+        <div>
+          <div class="header-kicker">Full backend + mobile upgrade</div>
+          <h1 class="header-title">Owner <span>Control Center</span></h1>
+          <p class="header-copy">
+            Pantau performa toko, proses order, edit produk, dan atur payment gateway / wallet owner dari satu dashboard yang sudah tersambung ke backend.
+          </p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-secondary" id="refreshBtn">Refresh Data</button>
+          <button class="btn-primary" onclick="showPanel('payment')">Atur Payment</button>
+        </div>
+      </section>
+
+      <section class="grid-stats">
+        <div class="stat-card">
+          <div class="stat-label">Revenue Selesai</div>
+          <div class="stat-value" id="statRevenue">Rp 0</div>
+          <div class="stat-note" id="statRevenueNote">order selesai</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Order</div>
+          <div class="stat-value" id="statOrders">0</div>
+          <div class="stat-note">semua transaksi</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Order Aktif</div>
+          <div class="stat-value" id="statActiveOrders">0</div>
+          <div class="stat-note">pending + diproses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pelanggan</div>
+          <div class="stat-value" id="statCustomers">0</div>
+          <div class="stat-note" id="statAvg">AOV Rp 0</div>
+        </div>
+      </section>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="overview">Overview</button>
+        <button class="tab-btn" data-tab="orders">Orders</button>
+        <button class="tab-btn" data-tab="products">Products</button>
+        <button class="tab-btn" data-tab="customers">Customers</button>
+        <button class="tab-btn" data-tab="payment">Payment</button>
+      </div>
+
+      <section class="panel active" id="panel-overview">
+        <div class="panel-grid">
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">Revenue 6 Bulan Terakhir</div>
+                <div class="panel-sub">Grafik penjualan selesai untuk analisa cepat owner.</div>
+              </div>
+              <div class="badge" id="overviewBadge">Live API</div>
+            </div>
+            <div class="chart">
+              <div class="bars" id="revenueBars"></div>
+            </div>
+          </article>
+
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">Produk Terlaris</div>
+                <div class="panel-sub">Produk paling sering terjual berdasarkan histori order.</div>
+              </div>
+            </div>
+            <div class="mini-list" id="topProductsList"></div>
+          </article>
+        </div>
+
+        <article class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Order Terbaru</div>
+              <div class="panel-sub">Ringkasan cepat untuk operasional owner.</div>
+            </div>
+            <button class="btn-secondary mobile-only" onclick="showPanel('orders')">Lihat semua</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Pelanggan</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="latestOrdersBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel" id="panel-orders">
+        <article class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Kelola Order</div>
+              <div class="panel-sub">Update status order langsung ke backend.</div>
+            </div>
+            <div class="filters" id="orderFilters">
+              <button class="chip active" data-status="all">Semua</button>
+              <button class="chip" data-status="pending">Pending</button>
+              <button class="chip" data-status="process">Diproses</button>
+              <button class="chip" data-status="done">Selesai</button>
+              <button class="chip" data-status="cancel">Batal</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Pelanggan</th>
+                  <th>Pengiriman</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel" id="panel-products">
+        <div class="panel-grid">
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">Tambah / Edit Produk</div>
+                <div class="panel-sub">Data ini langsung dipakai frontend customer.</div>
+              </div>
+            </div>
+            <form class="stack" id="productForm">
+              <input type="hidden" id="productId"/>
+              <div class="form-grid">
+                <div class="field">
+                  <label>Nama Produk</label>
+                  <input id="productName" required/>
+                </div>
+                <div class="field">
+                  <label>Harga</label>
+                  <input id="productPrice" type="number" min="0" required/>
+                </div>
+                <div class="field">
+                  <label>Kategori</label>
+                  <select id="productCategory">
+                    <option value="atk">ATK</option>
+                    <option value="aksesoris">Aksesoris</option>
+                    <option value="fashion">Fashion</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Badge</label>
+                  <input id="productBadge" placeholder="Best / New / Sale"/>
+                </div>
+                <div class="field">
+                  <label>Emoji</label>
+                  <input id="productEmoji" placeholder="📦"/>
+                </div>
+                <div class="field">
+                  <label>URL Gambar</label>
+                  <input id="productImage" placeholder="images/products/namafile.jpg"/>
+                </div>
+                <div class="field full">
+                  <label>Deskripsi</label>
+                  <textarea id="productDesc" placeholder="Deskripsi singkat produk"></textarea>
+                </div>
+              </div>
+              <div class="row-actions">
+                <button class="btn-primary" type="submit" id="productSubmitBtn">Simpan Produk</button>
+                <button class="btn-secondary" type="button" id="productResetBtn">Reset Form</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">Tips Input Produk</div>
+                <div class="panel-sub">Biar katalog di customer UI tetap rapi di HP dan desktop.</div>
+              </div>
+            </div>
+            <div class="inline-note">
+              Gunakan nama singkat, gambar persegi, harga numerik tanpa titik, dan emoji fallback untuk mencegah kartu produk kosong saat image gagal dimuat.
+            </div>
+          </article>
+        </div>
+
+        <article class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Daftar Produk</div>
+              <div class="panel-sub">Edit atau hapus produk dari sini.</div>
+            </div>
+            <div class="badge" id="productCountBadge">0 produk</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produk</th>
+                  <th>Kategori</th>
+                  <th>Harga</th>
+                  <th>Badge</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="productsBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel" id="panel-customers">
+        <article class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Pelanggan Terdaftar</div>
+              <div class="panel-sub">Semua customer yang registrasi lewat frontend.</div>
+            </div>
+            <div class="badge" id="customerCountBadge">0 pelanggan</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Nama</th>
+                  <th>Kontak</th>
+                  <th>Email</th>
+                  <th>Terdaftar</th>
+                </tr>
+              </thead>
+              <tbody id="customersBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel" id="panel-payment">
+        <div class="panel-grid">
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">Payment Settings</div>
+                <div class="panel-sub">Tempat ngelink wallet owner dan metode bayar default.</div>
+              </div>
+            </div>
+
+            <form class="stack" id="paymentForm">
+              <div class="form-grid">
+                <div class="field">
+                  <label>Default Method</label>
+                  <select id="payDefaultMethod">
+                    <option value="manual_wallet">Manual Wallet / QRIS</option>
+                    <option value="cod">COD</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Mata Uang</label>
+                  <input id="payCurrency" value="IDR"/>
+                </div>
+                <div class="field">
+                  <label>Jenis Wallet</label>
+                  <input id="payWalletType" placeholder="DANA / OVO / GoPay / Bank"/>
+                </div>
+                <div class="field">
+                  <label>Nomor Wallet / Rekening</label>
+                  <input id="payWalletNumber" placeholder="contoh: 0812xxxx / 1234567890"/>
+                </div>
+                <div class="field">
+                  <label>Nama Pemilik Wallet</label>
+                  <input id="payWalletHolder" placeholder="Nama pemilik akun"/>
+                </div>
+                <div class="field">
+                  <label>QRIS Image URL</label>
+                  <input id="payQris" placeholder="https://..."/>
+                </div>
+                <div class="field full">
+                  <label>Instruksi Pembayaran</label>
+                  <textarea id="payInstructions" placeholder="Tulis langkah transfer yang ingin muncul di checkout customer"></textarea>
+                </div>
+                <div class="field">
+                  <label>Aktifkan PayPal Placeholder</label>
+                  <select id="payPaypalEnabled">
+                    <option value="false">Tidak</option>
+                    <option value="true">Ya</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>PayPal Client ID</label>
+                  <input id="payPaypalClientId" placeholder="opsional"/>
+                </div>
+                <div class="field full">
+                  <label>PayPal Secret</label>
+                  <input id="payPaypalSecret" placeholder="opsional"/>
+                </div>
+              </div>
+              <div class="row-actions">
+                <button class="btn-primary" type="submit">Simpan Payment</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="panel-card">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">Cara Link ke Wallet Kamu</div>
+                <div class="panel-sub">Langkah cepat setelah upgrade.</div>
+              </div>
+            </div>
+            <div class="inline-note">
+              1. Isi jenis wallet yang kamu pakai, misalnya DANA atau Bank.<br/>
+              2. Isi nomor wallet / rekening milikmu.<br/>
+              3. Isi nama pemilik wallet.<br/>
+              4. Kalau punya QRIS online, tempel URL gambarnya.<br/>
+              5. Simpan — customer checkout akan otomatis melihat instruksi pembayaranmu.
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="ownerToast">Tersimpan</div>
+
+  <script src="api.js"></script>
+  <script src="owner-app.js"></script>
+</body>
+</html>

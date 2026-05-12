@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aldi Market — Kebutuhan Kerja Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ── USER MENU STYLES ── */
+    .user-menu-wrap {
+      position: relative;
+    }
+    .user-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      border-radius: 20px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .user-btn:hover { background: var(--gold-d); }
+    .user-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .user-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 180px;
+      background: #fff;
+      border: 1.5px solid var(--c-border);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 0.4rem;
+      display: none;
+      z-index: 200;
+    }
+    .user-dropdown.open { display: block; }
+    .ud-item {
+      display: block;
+      width: 100%;
+      padding: 0.55rem 0.8rem;
+      background: none;
+      border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.82rem;
+      color: var(--c-ink);
+      text-align: left;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+    .ud-item:hover { background: var(--c-bg); }
+    .ud-item.danger { color: #c0392b; }
+    .ud-divider { height: 1px; background: var(--c-border); margin: 0.3rem 0; }
+
+    /* ── ORDER BADGE ── */
+    .btn-orders {
+      background: none;
+      border: 1.5px solid var(--c-border);
+      border-radius: 20px;
+      padding: 0.4rem 0.9rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      color: var(--c-ink);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-orders:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ── ORDER MODAL ── */
+    .order-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26,23,20,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      display: none;
+    }
+    .order-modal-overlay.open { display: block; }
+
+    .order-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(90vw, 560px);
+      max-height: 80vh;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+      z-index: 501;
+      display: none;
+      overflow: hidden;
+      flex-direction: column;
+    }
+    .order-modal.open { display: flex; }
+
+    .om-header {
+      padding: 1.5rem 1.8rem 1rem;
+      border-bottom: 1px solid var(--c-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .om-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--c-ink);
+    }
+    .om-close {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--c-muted);
+      padding: 0.3rem;
+    }
+    .om-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem 1.8rem;
+    }
+    .order-item-card {
+      border: 1.5px solid var(--c-border);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.8rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .oi-emoji { font-size: 2rem; flex-shrink: 0; }
+    .oi-info { flex: 1; }
+    .oi-name { font-size: 0.88rem; font-weight: 500; color: var(--c-ink); margin-bottom: 0.2rem; }
+    .oi-meta { font-size: 0.75rem; color: var(--c-muted); }
+    .oi-price { font-size: 0.9rem; font-weight: 600; color: var(--c-ink); margin-top: 0.4rem; }
+    .oi-status {
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .status-pending  { background: #fff3cd; color: #856404; }
+    .status-process  { background: #cfe2ff; color: #084298; }
+    .status-done     { background: #d1e7dd; color: #0f5132; }
+    .status-cancel   { background: #f8d7da; color: #842029; }
+
+    .om-empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--c-muted);
+      font-size: 0.88rem;
+    }
+    .om-empty span { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+
+    /* ── CHECKOUT FORM ── */
+    .checkout-form {
+      padding: 1.2rem 1.8rem;
+      border-top: 1px solid var(--c-border);
+    }
+    .cf-title { font-size: 0.85rem; font-weight: 500; margin-bottom: 0.8rem; color: var(--c-ink); }
+    .cf-input {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--c-border);
+      border-radius: 8px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.85rem;
+      color: var(--c-ink);
+      outline: none;
+      margin-bottom: 0.7rem;
+      background: var(--c-bg);
+    }
+    .cf-input:focus { border-color: var(--gold); }
+    .cf-row { display: flex; gap: 0.8rem; }
+    .btn-checkout {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--c-ink);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-checkout:hover { background: #2d2a26; }
+
+    [data-theme="dark"] {
+      --c-bg: #1a1714;
+      --c-ink: #f0ebe3;
+      --c-muted: #8a8078;
+      --c-border: #2d2a26;
+    }
+    [data-theme="dark"] .order-modal,
+    [data-theme="dark"] .user-dropdown {
+      background: #22201d;
+      border-color: #2d2a26;
+    }
+    [data-theme="dark"] .order-item-card { border-color: #2d2a26; }
+    [data-theme="dark"] .cf-input { background: #1a1714; color: #f0ebe3; border-color: #2d2a26; }
+  </style>
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-logo">
+      <span>A</span><span>L</span><span>D</span><span>I</span>
+      <span class="loader-space"> </span>
+      <span>M</span><span>A</span><span>R</span><span>K</span><span>E</span><span>T</span>
+    </div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+    <p class="loader-sub">Kebutuhan Kerja Premium</p>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+  <!-- CART SIDEBAR -->
+  <div id="cartOverlay" class="cart-overlay" onclick="toggleCart()"></div>
+  <aside id="cartSidebar" class="cart-sidebar">
+    <div class="cart-header">
+      <h3>Keranjang</h3>
+      <button onclick="toggleCart()" class="cart-close">✕</button>
+    </div>
+    <div id="cartItems" class="cart-items">
+      <p class="cart-empty">Keranjang masih kosong</p>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cartTotal">Rp 0</span>
+      </div>
+      <button class="btn-primary" onclick="openCheckout()">
+        Checkout Sekarang
+      </button>
+    </div>
+  </aside>
+
+  <!-- PRODUCT MODAL -->
+  <div id="modalOverlay" class="modal-overlay" onclick="closeModal()"></div>
+  <div id="productModal" class="product-modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-content">
+      <div class="modal-img-wrap">
+        <div class="modal-img-placeholder" id="modalImg"></div>
+      </div>
+      <div class="modal-info">
+        <p class="modal-category" id="modalCategory"></p>
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <p class="modal-price" id="modalPrice"></p>
+        <p class="modal-desc" id="modalDesc"></p>
+        <div class="modal-qty">
+          <button onclick="changeQty(-1)">−</button>
+          <span id="modalQty">1</span>
+          <button onclick="changeQty(1)">+</button>
+        </div>
+        <button class="btn-primary modal-add" onclick="addFromModal()">
+          Tambah ke Keranjang
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER HISTORY MODAL -->
+  <div class="order-modal-overlay" id="orderOverlay" onclick="closeOrderModal()"></div>
+  <div class="order-modal" id="orderModal">
+    <div class="om-header">
+      <span class="om-title">Pesanan Saya</span>
+      <button class="om-close" onclick="closeOrderModal()">✕</button>
+    </div>
+    <div class="om-body" id="omBody">
+      <div class="om-empty"><span>📦</span>Belum ada pesanan</div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="order-modal-overlay" id="checkoutOverlay" onclick="closeCheckoutModal()"></div>
+  <div class="order-modal" id="checkoutModal" style="max-height:90vh">
+    <div class="om-header">
+      <span class="om-title">Konfirmasi Pesanan</span>
+      <button class="om-close" onclick="closeCheckoutModal()">✕</button>
+    </div>
+    <div class="om-body" id="checkoutSummary"></div>
+    <div class="checkout-form">
+      <p class="cf-title">Informasi Pengiriman</p>
+      <input type="text" class="cf-input" id="cfName" placeholder="Nama penerima"/>
+      <input type="text" class="cf-input" id="cfPhone" placeholder="Nomor telepon"/>
+      <input type="text" class="cf-input" id="cfAddress" placeholder="Alamat lengkap"/>
+      <div class="cf-row">
+        <input type="text" class="cf-input" id="cfCity" placeholder="Kota"/>
+        <input type="text" class="cf-input" id="cfPost" placeholder="Kode pos"/>
+      </div>
+      <select class="cf-input" id="cfPaymentMethod"></select>
+      <div id="paymentHint" style="font-size:0.78rem;color:var(--c-muted);line-height:1.6;padding:0.2rem 0 0.7rem"></div>
+      <button class="btn-checkout" onclick="placeOrder()">Buat Pesanan</button>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">Aldi<span>Market</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#banner"   onclick="closeMenu()">Promo</a></li>
+      <li><a href="#products" onclick="closeMenu()">Produk</a></li>
+      <li><a href="#about"    onclick="closeMenu()">Tentang</a></li>
+      <li><a href="#contact"  onclick="closeMenu()">Kontak</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" class="search-input" placeholder="Cari produk..." oninput="filterProducts()"/>
+        <span class="search-icon">⌕</span>
+      </div>
+      <button class="btn-cart" onclick="toggleCart()">
+        🛒 <span id="cartCount">0</span>
+      </button>
+      <button class="btn-orders" onclick="openOrderModal()">📦 Pesanan</button>
+      <div class="user-menu-wrap" id="userMenuWrap">
+        <!-- Filled by JS -->
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Toggle tema">☀️</button>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-content">
+      <p class="hero-tag reveal">Premium Office Supply Store</p>
+      <h1 class="hero-title reveal">Lengkapi Ruang<br/><em>Kerja Kamu</em></h1>
+      <p class="hero-desc reveal">Semua kebutuhan kerja dalam satu tempat — dari alat tulis, aksesoris, hingga fashion profesional.</p>
+      <div class="hero-cta reveal">
+        <a href="#products" class="btn-primary">Belanja Sekarang</a>
+        <a href="#banner"   class="btn-outline">Lihat Promo</a>
+      </div>
+    </div>
+    <div class="hero-visual reveal">
+      <img src="images/hero.jpg" alt="Aldi Market" class="hero-img"
+           onerror="this.style.display='none'; document.getElementById('heroPlaceholder').style.display='flex';"/>
+      <div id="heroPlaceholder" class="img-placeholder hero-placeholder" style="display:none;">
+        <span>📸</span><p>images/hero.jpg</p><small>800 × 600 px</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANNER -->
+  <section id="banner">
+    <div class="section-head reveal">
+      <p class="section-tag">Promo & Iklan</p>
+      <h2 class="section-title">Penawaran <em>Terbaik</em></h2>
+    </div>
+    <div class="banner-grid">
+      <div class="banner-card banner-large reveal">
+        <div class="banner-img">
+          <img src="images/banner/banner1.jpg" alt="Banner 1"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
+          <div class="img-placeholder" style="display:none;"><span>📸</span><p>banner1.jpg</p></div>
+        </div>
+        <div class="banner-text">
+          <p class="banner-tag">Promo Spesial</p>
+          <h3>Diskon 20% ATK</h3>
+          <p>Untuk semua produk alat tulis pilihan</p>
+          <a href="#products" class="btn-outline-sm">Lihat Produk</a>
+        </div>
+      </div>
+      <div class="banner-card reveal reveal-delay-1">
+        <div class="banner-img">
+          <img src="images/banner/banner2.jpg" alt="Banner 2"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
+          <div class="img-placeholder" style="display:none;"><span>📸</span><p>banner2.jpg</p></div>
+        </div>
+        <div class="banner-text">
+          <p class="banner-tag">New Arrival</p>
+          <h3>Aksesoris Terbaru</h3>
+          <p>Koleksi aksesoris kerja modern</p>
+          <a href="#products" class="btn-outline-sm">Lihat →</a>
+        </div>
+      </div>
+      <div class="banner-card reveal reveal-delay-2">
+        <div class="banner-img">
+          <img src="images/banner/banner3.jpg" alt="Banner 3"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
+          <div class="img-placeholder" style="display:none;"><span>📸</span><p>banner3.jpg</p></div>
+        </div>
+        <div class="banner-text">
+          <p class="banner-tag">Best Seller</p>
+          <h3>Fashion Kerja</h3>
+          <p>Tampil profesional setiap hari</p>
+          <a href="#products" class="btn-outline-sm">Lihat →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products">
+    <div class="section-head reveal">
+      <p class="section-tag">Katalog</p>
+      <h2 class="section-title">Produk <em>Kami</em></h2>
+    </div>
+    <div class="filter-tabs reveal">
+      <button class="filter-btn active" onclick="filterCategory('all')">Semua</button>
+      <button class="filter-btn" onclick="filterCategory('atk')">📝 ATK</button>
+      <button class="filter-btn" onclick="filterCategory('aksesoris')">💻 Aksesoris</button>
+      <button class="filter-btn" onclick="filterCategory('fashion')">👔 Fashion</button>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+    <div id="noResult" class="no-result" style="display:none;">
+      <p>Produk tidak ditemukan 😕</p>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-inner">
+      <div class="about-text reveal">
+        <p class="section-tag">Tentang Kami</p>
+        <h2 class="section-title">Mengapa <em>Aldi Market?</em></h2>
+        <p class="about-desc">Aldi Market hadir untuk memenuhi semua kebutuhan profesional kamu — dari perlengkapan kantor harian hingga penampilan kerja yang elegan. Kami mengutamakan kualitas, harga terjangkau, dan pelayanan terbaik.</p>
+        <div class="about-features">
+          <div class="feature-item"><span class="feature-icon">✦</span><div><strong>Produk Berkualitas</strong><p>Dipilih langsung dari supplier terpercaya</p></div></div>
+          <div class="feature-item"><span class="feature-icon">✦</span><div><strong>Harga Terjangkau</strong><p>Harga terbaik tanpa kompromi kualitas</p></div></div>
+          <div class="feature-item"><span class="feature-icon">✦</span><div><strong>Pengiriman Cepat</strong><p>Siap kirim ke seluruh Indonesia</p></div></div>
+        </div>
+      </div>
+      <div class="about-img reveal reveal-delay-2">
+        <img src="images/about.jpg" alt="Aldi Market" class="about-photo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
+        <div class="img-placeholder about-placeholder" style="display:none;"><span>📸</span><p>about.jpg</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-head reveal">
+      <p class="section-tag">Kontak</p>
+      <h2 class="section-title">Hubungi <em>Kami</em></h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="contact-item"><span>📍</span><div><strong>Alamat</strong><p>Jl. xxx</p></div></div>
+        <div class="contact-item"><span>📱</span><div><strong>WhatsApp</strong><a href="https://wa.me/6285692664690">+62 856 926 646 90</a></div></div>
+        <div class="contact-item"><span>✉</span><div><strong>Email</strong><a href="mailto:aldiynsh213@email.com">aldiynsh213@email.com</a></div></div>
+        <div class="contact-item"><span>🕐</span><div><strong>Jam Operasional</strong><p>Senin – Sabtu: 08.00 – 20.00</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">Aldi<span>Market</span></div>
+        <p>Kebutuhan Kerja Premium, Harga Bersahabat.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Kategori</h4>
+        <a href="#" onclick="filterCategory('atk')">ATK</a>
+        <a href="#" onclick="filterCategory('aksesoris')">Aksesoris Kerja</a>
+        <a href="#" onclick="filterCategory('fashion')">Fashion Kerja</a>
+      </div>
+      <div class="footer-links">
+        <h4>Info</h4>
+        <a href="#about">Tentang Kami</a>
+        <a href="#contact">Kontak</a>
+        <a href="#banner">Promo</a>
+      </div>
+      <div class="footer-social">
+        <h4>Ikuti Kami</h4>
+        <div class="social-icons">
+          <a href="#" title="Instagram">◎</a>
+          <a href="#" title="Facebook">f</a>
+          <a href="#" title="TikTok">♪</a>
+          <a href="#" title="WhatsApp">📱</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Aldi Market. All rights reserved.</p>
+      <p>Dibuat dengan ♥ oleh <a href="#">Aldi</a></p>
+    </div>
+  </footer>
+
+  <script src="api.js"></script>
+  <script src="script.js"></script>
+  
+  <script>
+  const currentUser = window.AldiAPI.getUser();
+  let paymentConfig = null;
+
+  function renderUserMenu() {
+    const wrap = document.getElementById('userMenuWrap');
+    if (!wrap) return;
+
+    if (!currentUser) {
+      wrap.innerHTML = `<a href="login.html" style="font-size:0.8rem;font-family:'Jost',sans-serif;font-weight:500;color:var(--c-ink);text-decoration:none;padding:0.4rem 0.9rem;border:1.5px solid var(--c-border);border-radius:20px;">Masuk</a>`;
+      return;
+    }
+
+    const initials = (currentUser.name || currentUser.username || 'AM')
+      .split(' ')
+      .map(w => w[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+
+    wrap.innerHTML = `
+      <div class="user-menu-wrap">
+        <button class="user-btn" onclick="toggleUserMenu()">
+          <div class="user-avatar">${initials}</div>
+          ${(currentUser.name || currentUser.username).split(' ')[0]}
+        </button>
+        <div class="user-dropdown" id="userDd">
+          <div style="padding:0.4rem 0.8rem 0.3rem;font-size:0.7rem;color:var(--c-muted);text-transform:uppercase;letter-spacing:0.06em">${currentUser.username || ''}</div>
+          <div class="ud-divider"></div>
+          <button class="ud-item" onclick="openOrderModal()">📦 Pesanan Saya</button>
+          ${currentUser.role === 'owner' ? `<a href="owner.html" class="ud-item" style="text-decoration:none">📊 Dashboard Owner</a>` : ''}
+          <button class="ud-item danger" onclick="doLogout()">Keluar</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function toggleUserMenu() {
+    document.getElementById('userDd')?.classList.toggle('open');
+  }
+
+  function doLogout() {
+    window.AldiAPI.clearSession();
+    window.location.href = 'login.html';
+  }
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.user-menu-wrap')) {
+      document.getElementById('userDd')?.classList.remove('open');
+    }
+  });
+
+  async function getMyOrders() {
+    if (!currentUser) return [];
+    try {
+      const result = await window.AldiAPI.request('/orders/me');
+      return result.orders || [];
+    } catch (error) {
+      showToast(error.message);
+      return [];
+    }
+  }
+
+  async function openOrderModal() {
+    const body = document.getElementById('omBody');
+
+    if (!currentUser) {
+      body.innerHTML = `<div class="om-empty"><span>🔒</span>Silakan login untuk melihat pesanan</div>`;
+    } else {
+      const orders = await getMyOrders();
+      if (!orders.length) {
+        body.innerHTML = `<div class="om-empty"><span>📦</span>Belum ada pesanan</div>`;
+      } else {
+        const statusLabel = { pending:'Menunggu', process:'Diproses', done:'Selesai', cancel:'Dibatalkan' };
+        body.innerHTML = orders.map((order) => `
+          <div class="order-item-card">
+            <div class="oi-emoji">${order.items?.[0]?.emoji || '📦'}</div>
+            <div class="oi-info">
+              <div class="oi-name">${order.items.map(i => i.name + ' x' + i.qty).join(', ')}</div>
+              <div class="oi-meta">${new Date(order.createdAt).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'})} · ${order.paymentMethod || '-'}</div>
+              <div class="oi-price">${formatRupiah(order.total)}</div>
+              <div style="font-size:0.72rem;color:var(--c-muted);margin-top:0.3rem">${(order.paymentInstructions || []).join(' ')}</div>
+            </div>
+            <span class="oi-status status-${order.status}">${statusLabel[order.status] || order.status}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    document.getElementById('orderOverlay').classList.add('open');
+    document.getElementById('orderModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeOrderModal() {
+    document.getElementById('orderOverlay').classList.remove('open');
+    document.getElementById('orderModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  async function loadPaymentMethods() {
+    const select = document.getElementById('cfPaymentMethod');
+    const hint = document.getElementById('paymentHint');
+    if (!select || !hint) return;
+
+    try {
+      const result = await window.AldiAPI.request('/payment/public-config');
+      paymentConfig = result.payment;
+      select.innerHTML = (paymentConfig.methods || []).map((method) => `
+        <option value="${method.id}" ${method.id === paymentConfig.defaultMethod ? 'selected' : ''}>
+          ${method.label}
+        </option>
+      `).join('');
+      updatePaymentHint();
+    } catch (error) {
+      select.innerHTML = `<option value="manual_wallet">Transfer Wallet Owner</option><option value="cod">COD</option>`;
+      hint.textContent = 'Konfigurasi payment backend belum terbaca. Checkout tetap bisa lanjut.';
+    }
+  }
+
+  function updatePaymentHint() {
+    const select = document.getElementById('cfPaymentMethod');
+    const hint = document.getElementById('paymentHint');
+    if (!select || !hint) return;
+    const method = select.value;
+    if (method === 'cod') {
+      hint.textContent = 'Pembayaran dilakukan saat barang diterima.';
+      return;
+    }
+    if (paymentConfig) {
+      const walletType = paymentConfig.walletType || 'wallet owner';
+      const owner = paymentConfig.walletHolder ? ` atas nama ${paymentConfig.walletHolder}` : '';
+      const hasNumber = paymentConfig.hasWalletNumber ? 'Nomor wallet sudah diatur owner.' : 'Owner belum mengisi nomor wallet.';
+      hint.textContent = `Metode ini akan memberi instruksi transfer ke ${walletType}${owner}. ${hasNumber}`;
+      return;
+    }
+    hint.textContent = 'Instruksi pembayaran akan tampil setelah order dibuat.';
+  }
+
+  async function openCheckout() {
+    if (!cart.length) {
+      showToast('Keranjang masih kosong!');
+      return;
+    }
+    if (!currentUser) {
+      showToast('Login dulu untuk checkout!');
+      setTimeout(() => { window.location.href = 'login.html'; }, 1200);
+      return;
+    }
+
+    const summary = document.getElementById('checkoutSummary');
+    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+    summary.innerHTML = `
+      <div style="padding:0.5rem 0">
+        ${cart.map((item) => `
+          <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--c-border);font-size:0.85rem">
+            <span>${item.name} x${item.qty}</span>
+            <span style="font-weight:500">${formatRupiah(item.price * item.qty)}</span>
+          </div>
+        `).join('')}
+        <div style="display:flex;justify-content:space-between;padding:0.8rem 0;font-weight:600;font-size:0.95rem">
+          <span>Total</span>
+          <span>${formatRupiah(total)}</span>
+        </div>
+      </div>
+    `;
+
+    if (currentUser.name) document.getElementById('cfName').value = currentUser.name;
+    if (currentUser.phone) document.getElementById('cfPhone').value = currentUser.phone;
+    await loadPaymentMethods();
+
+    toggleCart();
+    document.getElementById('checkoutOverlay').classList.add('open');
+    document.getElementById('checkoutModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCheckoutModal() {
+    document.getElementById('checkoutOverlay').classList.remove('open');
+    document.getElementById('checkoutModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  async function placeOrder() {
+    const payload = {
+      recipient: {
+        name: document.getElementById('cfName').value.trim(),
+        phone: document.getElementById('cfPhone').value.trim(),
+        address: document.getElementById('cfAddress').value.trim(),
+        city: document.getElementById('cfCity').value.trim(),
+        post: document.getElementById('cfPost').value.trim()
+      },
+      paymentMethod: document.getElementById('cfPaymentMethod').value,
+      items: cart.map((item) => ({ id: item.id, qty: item.qty }))
+    };
+
+    if (!payload.recipient.name || !payload.recipient.phone || !payload.recipient.address) {
+      showToast('Isi data pengiriman dulu!');
+      return;
+    }
+
+    try {
+      const result = await window.AldiAPI.request('/orders', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      cart = [];
+      updateCartUI();
+      closeCheckoutModal();
+      showToast('✓ Pesanan berhasil dibuat!');
+
+      const order = result.order;
+      const body = document.getElementById('omBody');
+      body.innerHTML = `
+        <div class="order-item-card" style="margin-bottom:0">
+          <div class="oi-emoji">${order.items?.[0]?.emoji || '📦'}</div>
+          <div class="oi-info">
+            <div class="oi-name">Order ${order.id}</div>
+            <div class="oi-meta">${formatRupiah(order.total)} · ${order.paymentMethod}</div>
+            <div style="font-size:0.75rem;color:var(--c-muted);margin-top:0.5rem;line-height:1.7">
+              ${(order.paymentInstructions || []).map(line => `<div>• ${line}</div>`).join('')}
+            </div>
+          </div>
+          <span class="oi-status status-${order.status}">Menunggu</span>
+        </div>
+      `;
+      document.getElementById('orderOverlay').classList.add('open');
+      document.getElementById('orderModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    } catch (error) {
+      showToast(error.message);
+    }
+  }
+
+  document.getElementById('cfPaymentMethod')?.addEventListener('change', updatePaymentHint);
+
+  renderUserMenu();
+  window.toggleUserMenu = toggleUserMenu;
+  window.doLogout = doLogout;
+  window.openOrderModal = openOrderModal;
+  window.closeOrderModal = closeOrderModal;
+  window.openCheckout = openCheckout;
+  window.closeCheckoutModal = closeCheckoutModal;
+  window.placeOrder = placeOrder;
+  </script>
+
+</body>
+</html>
