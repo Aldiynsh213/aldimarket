@@ -9,7 +9,7 @@ async function ensureStore() {
   try {
     await fs.access(DATA_FILE);
   } catch (error) {
-    throw new Error('File data tidak ditemukan. Jalankan ulang proyek atau kembalikan storage/app-data.json.');
+    await fs.copyFile(path.join(path.dirname(DATA_FILE), 'app-data.example.json'), DATA_FILE);
   }
 }
 

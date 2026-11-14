@@ -21,7 +21,7 @@
 
 ## Akun owner bawaan
 - Username: `AldiYnsh123`
-- Phone: `085692664690`
+- Phone: `08xxxxxxxxxx`
 - Password: `Aldiynsh123@`
 
 ## Cara link ke wallet owner

@@ -1,0 +1,206 @@
+{
+  "users": [],
+  "products": [
+    {
+      "id": 1,
+      "name": "Pulpen Pilot G2",
+      "category": "atk",
+      "price": 15000,
+      "desc": "Pulpen gel premium dengan tinta halus, nyaman untuk menulis lama.",
+      "badge": "Best",
+      "img": "images/products/pulpen-pilot.jpg",
+      "emoji": "✒️"
+    },
+    {
+      "id": 2,
+      "name": "Buku Agenda Premium",
+      "category": "atk",
+      "price": 45000,
+      "desc": "Agenda hard cover elegan, kertas tebal anti tembus.",
+      "badge": null,
+      "img": "images/products/agenda.jpg",
+      "emoji": "📓"
+    },
+    {
+      "id": 3,
+      "name": "Stabilo Boss Set",
+      "category": "atk",
+      "price": 28000,
+      "desc": "Set stabilo 6 warna untuk highlight dokumen penting.",
+      "badge": "Sale",
+      "img": "images/products/stabilo.jpg",
+      "emoji": "🖍️"
+    },
+    {
+      "id": 4,
+      "name": "Staples + Isi Lengkap",
+      "category": "atk",
+      "price": 32000,
+      "desc": "Staples besi tahan lama, sudah termasuk 1000 isi staples.",
+      "badge": null,
+      "img": "images/products/staples.jpg",
+      "emoji": "📎"
+    },
+    {
+      "id": 5,
+      "name": "Penggaris Besi 30cm",
+      "category": "atk",
+      "price": 18000,
+      "desc": "Penggaris stainless presisi tinggi untuk kebutuhan kantor.",
+      "badge": null,
+      "img": "images/products/penggaris.jpg",
+      "emoji": "📏"
+    },
+    {
+      "id": 6,
+      "name": "Sticky Notes Pastel",
+      "category": "atk",
+      "price": 22000,
+      "desc": "Sticky notes warna pastel, mudah ditempel dan dilepas.",
+      "badge": "New",
+      "img": "images/products/sticky-notes.jpg",
+      "emoji": "🗒️"
+    },
+    {
+      "id": 7,
+      "name": "Mouse Wireless Logitech",
+      "category": "aksesoris",
+      "price": 185000,
+      "desc": "Mouse wireless ergonomis, baterai tahan lama.",
+      "badge": "Best",
+      "img": "images/products/mouse.jpg",
+      "emoji": "🖱️"
+    },
+    {
+      "id": 8,
+      "name": "Mousepad XL Desk Mat",
+      "category": "aksesoris",
+      "price": 95000,
+      "desc": "Desk mat luas, permukaan halus untuk mouse dan keyboard.",
+      "badge": null,
+      "img": "images/products/mousepad.jpg",
+      "emoji": "🖱️"
+    },
+    {
+      "id": 9,
+      "name": "Stand Laptop Adjustable",
+      "category": "aksesoris",
+      "price": 145000,
+      "desc": "Stand laptop aluminium, tinggi dapat diatur.",
+      "badge": "New",
+      "img": "images/products/stand-laptop.jpg",
+      "emoji": "💻"
+    },
+    {
+      "id": 10,
+      "name": "Headset Office Premium",
+      "category": "aksesoris",
+      "price": 220000,
+      "desc": "Headset jernih untuk meeting dan kerja hybrid.",
+      "badge": null,
+      "img": "images/products/headset.jpg",
+      "emoji": "🎧"
+    },
+    {
+      "id": 11,
+      "name": "USB Hub 4 Port",
+      "category": "aksesoris",
+      "price": 75000,
+      "desc": "USB hub praktis untuk ekspansi port perangkat kerja.",
+      "badge": null,
+      "img": "images/products/usb-hub.jpg",
+      "emoji": "🔌"
+    },
+    {
+      "id": 12,
+      "name": "Webcam HD 1080p",
+      "category": "aksesoris",
+      "price": 310000,
+      "desc": "Webcam full HD untuk meeting dan streaming profesional.",
+      "badge": "New",
+      "img": "images/products/webcam.jpg",
+      "emoji": "📷"
+    },
+    {
+      "id": 13,
+      "name": "Kemeja Pria Formal",
+      "category": "fashion",
+      "price": 185000,
+      "desc": "Kemeja formal bahan adem untuk kerja harian.",
+      "badge": "Best",
+      "img": "images/products/kemeja-pria.jpg",
+      "emoji": "👔"
+    },
+    {
+      "id": 14,
+      "name": "Kemeja Wanita Elegan",
+      "category": "fashion",
+      "price": 175000,
+      "desc": "Kemeja wanita dengan cutting rapi dan tampilan elegan.",
+      "badge": null,
+      "img": "images/products/kemeja-wanita.jpg",
+      "emoji": "👗"
+    },
+    {
+      "id": 15,
+      "name": "Celana Bahan Pria",
+      "category": "fashion",
+      "price": 195000,
+      "desc": "Celana bahan nyaman untuk kantor dan acara formal.",
+      "badge": null,
+      "img": "images/products/celana-pria.jpg",
+      "emoji": "👖"
+    },
+    {
+      "id": 16,
+      "name": "Sepatu Kerja Pria",
+      "category": "fashion",
+      "price": 385000,
+      "desc": "Sepatu kerja premium, nyaman dipakai seharian.",
+      "badge": "Best",
+      "img": "images/products/sepatu-pria.jpg",
+      "emoji": "👞"
+    },
+    {
+      "id": 17,
+      "name": "Tas Kerja Ransel Laptop",
+      "category": "fashion",
+      "price": 275000,
+      "desc": "Tas kerja anti air dengan slot laptop.",
+      "badge": "New",
+      "img": "images/products/tas-ransel.jpg",
+      "emoji": "🎒"
+    },
+    {
+      "id": 18,
+      "name": "Dompet Kulit Pria",
+      "category": "fashion",
+      "price": 145000,
+      "desc": "Dompet kulit slim minimalis dengan banyak slot kartu.",
+      "badge": null,
+      "img": "images/products/dompet.jpg",
+      "emoji": "👛"
+    }
+  ],
+  "orders": [],
+  "settings": {
+    "store": {
+      "name": "Aldi Market",
+      "supportEmail": "support@aldimarket.local",
+      "supportPhone": "08xxxxxxxxxx",
+      "supportWhatsApp": "628xxxxxxxxxx"
+    },
+    "payment": {
+      "defaultMethod": "manual_wallet",
+      "walletType": "DANA",
+      "walletNumber": "",
+      "walletHolder": "Aldi Market",
+      "qrisImageUrl": "",
+      "instructions": "Masukkan nomor wallet / QRIS milik owner di dashboard. Setelah customer checkout, mereka akan menerima instruksi pembayaran otomatis.",
+      "paypalEnabled": false,
+      "paypalClientId": "",
+      "paypalSecret": "",
+      "currency": "IDR"
+    }
+  }
+}
